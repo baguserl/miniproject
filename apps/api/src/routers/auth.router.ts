@@ -1,7 +1,7 @@
 import { AuthController } from '@/controllers/auth.controller';
 import { Router } from 'express';
 
-export class SampleRouter {
+export class AuthRouter {
   private router: Router;
   private authController: AuthController;
 
@@ -15,6 +15,7 @@ export class SampleRouter {
     this.router.get('/', this.authController.getUsers);
     this.router.get('/:id', this.authController.getUsers);
     this.router.post('/register', this.authController.registerUser);
+    this.router.post('/login', this.authController.loginUser);
   }
 
   getRouter(): Router {

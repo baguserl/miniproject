@@ -13,6 +13,7 @@
   "devDependencies": {
     "@commitlint/cli": "^18.4.2",
     "@commitlint/config-conventional": "^18.4.2",
+    "dotenv": "^16.4.5",
     "eslint": "^8.48.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.1.0",
@@ -31,5 +32,12 @@
     "hooks": {
       "pre-commit": "npx lint-staged"
     }
+  },
+  "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "framer-motion": "^11.3.6"
   }
 }
