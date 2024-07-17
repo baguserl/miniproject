@@ -10,12 +10,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  password     String
+  name         String
+  birthdate    DateTime  @db.Date
+  referralCode String    @db.Char(8)
+  referredBy   Int?      @default(0)
+  points       Float?    @default(0) @db.Double
+  vouchers     Int?      @default(0)
+  role         String    @default("user")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
 
-  @@map("samples") // if you want to use snake_case format
+  @@map("users")
+}
+
+model LogUserlogin {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String
+  createdAt DateTime @default(now())
+
+  @@map("log_userlogin")
 }

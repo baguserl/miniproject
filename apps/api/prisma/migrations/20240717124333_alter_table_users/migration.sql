@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `users` MODIFY `referredBy` INTEGER NULL DEFAULT 0,
+    MODIFY `points` DOUBLE NULL DEFAULT 0,
+    MODIFY `vouchers` INTEGER NULL DEFAULT 0;
