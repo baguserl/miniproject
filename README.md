@@ -1,14 +1,22 @@
 # Purwadhika Final Project Repository
 
-This project uses React.js with NextJS for the frontend, Express.js for the backend, and TurboRepo for monorepo management, facilitating rapid development of a scalable web application with streamlined collaboration and efficient server-client interactions.
+Kelompok 5
+Hendrayanto Anwar (Feature 1)
+Bagus Prakoso (Feature 2)
 
-## Available Scripts
+## How to run
 
-### `npm run dev`
+install this first
+### `npm install turbo@latest --save-dev`
 
 Runs the app in the development mode.
 
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser. For API, you can access it in [http://localhost:8000/api](http://localhost:8000/api). The app will reload if you make edits.
+Open [http://localhost:5670](http://localhost:5670) to view it in the browser. 
+
+
+### `npm run dev`
+
+Run the app for the Development
 
 ### `npm run build`
 
