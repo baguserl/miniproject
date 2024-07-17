@@ -1,20 +1,20 @@
-import { SampleController } from '@/controllers/sample.controller';
+import { AuthController } from '@/controllers/auth.controller';
 import { Router } from 'express';
 
 export class SampleRouter {
   private router: Router;
-  private sampleController: SampleController;
+  private authController: AuthController;
 
   constructor() {
-    this.sampleController = new SampleController();
+    this.authController = new AuthController();
     this.router = Router();
     this.initializeRoutes();
   }
 
   private initializeRoutes(): void {
-    this.router.get('/', this.sampleController.getSampleData);
-    this.router.get('/:id', this.sampleController.getSampleDataById);
-    this.router.post('/', this.sampleController.createSampleData);
+    this.router.get('/', this.authController.getUsers);
+    this.router.get('/:id', this.authController.getUsers);
+    this.router.post('/register', this.authController.registerUser);
   }
 
   getRouter(): Router {
