@@ -46,7 +46,7 @@ export default function Navbar() {
 
   async function getProfile() {
     const res = await myProfile();
-
+    
     setBalance(res.data.profile.balance);
   }
 
@@ -137,7 +137,7 @@ export default function Navbar() {
             justify={'flex-end'}
             direction={'row'}
             spacing={6}>
-            <Box display={{ base: 'none', md: 'inline-flex' }}>Balance: {balance}</Box>
+            <Box as={'a'} fontSize={'sm'} display={{ base: 'none', md: 'inline-flex' }}>Balance: {balance}</Box>
             <Button
               as={'a'}
               fontSize={'sm'}

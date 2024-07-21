@@ -201,7 +201,6 @@ export function ModalLogin({isOpen, onClose}: ModalLoginProps) {
             if (error.response?.data?.message) {
                 setAlertMessage(error.response.data.message);
             }
-            console.log(error)
             setAlertType("error")
             setShowAlert(true);
         }

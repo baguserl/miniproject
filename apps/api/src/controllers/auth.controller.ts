@@ -15,8 +15,7 @@ export class AuthController {
             
           const users = await prisma.user.findMany();
           return res.status(200).send({
-            message: "success",
-            data: users
+            message: "success, you are connected to database"
           })
 
         } catch (error) {

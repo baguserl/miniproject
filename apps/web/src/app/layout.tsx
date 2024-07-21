@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ChakraProvider, useDisclosure } from '@chakra-ui/react'
-import Navbar from '@/components/Header';
+import { ChakraProvider } from '@chakra-ui/react'
+import Navbar from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
