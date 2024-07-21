@@ -10,40 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id             Int            @id @default(autoincrement())
-  email          String         @unique
-  password       String
-  name           String
-  birthdate      DateTime       @db.Date
-  referralCode   String?        @db.Char(8)
-  referredBy     Int?           @default(0)
-  role           String         @default("customer")
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime?      @updatedAt
-  log_userpoints LogUserPoint[]
-  log_userlogins LogUserlogin[]
-
-  @@map("users")
-}
-
-model LogUserPoint {
+model Sample {
   id        Int      @id @default(autoincrement())
-  userId    Int
-  points    Float    @default(0)
-  discount  Float    @default(0)
+  name      String
+  code      String   @unique
   createdAt DateTime @default(now())
-  User      User     @relation(fields: [userId], references: [id])
+  updatedAt DateTime @updatedAt
 
-  @@map("log_userpoints")
-}
-
-model LogUserlogin {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  token     String
-  createdAt DateTime @default(now())
-  User      User     @relation(fields: [userId], references: [id])
-
-  @@map("log_userlogins")
+  @@map("samples") // if you want to use snake_case format
 }
