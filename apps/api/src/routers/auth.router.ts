@@ -13,7 +13,7 @@ export class AuthRouter {
   }
 
   private initializeRoutes(): void {
-    // this.router.get('/', this.authController.getUsers);
+    this.router.get('/', this.authController.getUsers);
     this.router.get('/me', verifyToken, this.authController.myProfile);
     this.router.post('/register', this.authController.registerUser);
     this.router.post('/login', this.authController.loginUser);
