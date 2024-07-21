@@ -5,9 +5,14 @@ import { sign } from "jsonwebtoken";
 import { logErrorHandler } from "../helpers/errorLogger";
 import { JWT_SECRET_KEY } from '@/config';
 import validator from 'validator';
+import moment from 'moment';
 
 const prisma = new PrismaClient()
 export class AuthController {
+
+    async getCurrentUnixTimestampInSeconds() {
+      return Math.floor(Date.now() / 1000);
+    }
 
     async getUsers(req: Request, res: Response) {
         
@@ -46,13 +51,7 @@ export class AuthController {
             message: "Name, Email, Password, Birthdate and Role is required"
           })
         }
-        const validbirthdate = new Date(birthdate).toISOString().slice(0, 10);
-
-        if (!validator.isDate(validbirthdate)) {
-          return res.status(400).send({
-            message: "Wrong Birthdate format"
-          })
-        }
+        const validbirthdate = new Date(birthdate).toISOString();
 
         if (!validator.isEmail(email)) {
           return res.status(400).send({
@@ -156,13 +155,13 @@ export class AuthController {
         })
 
       } catch (error: any) {
-        // if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        //   console.log(error.code)
-        // }
-        // throw error
-        return res.status(500).send({
-          error: JSON.stringify(error)
-        });
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          console.log(error.code)
+        }
+        throw error
+        // return res.status(500).send({
+        //   error: JSON.stringify(error)
+        // });
       }
     
     }
@@ -226,6 +225,16 @@ export class AuthController {
 
     async myProfile(req: Request, res: Response) {
       try {
+        // console.log(req.user?.exp)
+        // console.log(await this.getCurrentUnixTimestampInSeconds())
+        // if (req.user?.exp) {
+        //   if (req.user?.exp > await this.getCurrentUnixTimestampInSeconds()) {
+        //     return res.status(401).send({
+        //       message: "Unauthorized",
+        //       data: "token expired"
+        //     })
+        //   }
+        // }
 
         const myid = req.user?.id
 
@@ -237,7 +246,8 @@ export class AuthController {
             id: true,
             name: true,
             email: true,
-            role: true
+            role: true,
+            referralCode: true
           }
         })
 
@@ -246,18 +256,23 @@ export class AuthController {
           name: user?.name,
           email: user?.email,
           role: user?.role,
+          referralCode: user?.referralCode,
           balance: 0,
           discount: 0
         }        
 
         if (user?.role == 'customer') {
+          const gte = moment().subtract(3, 'months').toISOString();
           const balance = await prisma.logUserPoint.aggregate({
             _sum: {
               points: true,
               discount: true
             },
             where: {
-              userId: myid
+              userId: myid,
+              createdAt: {
+                gte: gte
+              }
             }
           })
 

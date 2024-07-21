@@ -45,6 +45,8 @@
     "class-variance-authority": "^0.7.0",
     "framer-motion": "^11.3.6",
     "lucide-react": "^0.412.0",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.45",
     "react-day-picker": "^9.0.0",
     "tailwind-merge": "^2.4.0"
   }

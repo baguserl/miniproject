@@ -46,7 +46,6 @@ export async function test() {
 
 export async function myProfile() {
     const authToken = await getCookie("authToken")
-    // console.log(authToken)
     if (authToken) {
         const res = await axios.get(base_url_api + "/auth/me", {
             headers: {

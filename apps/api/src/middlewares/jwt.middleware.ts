@@ -7,6 +7,7 @@ type User = {
     email: string;
     name: string;
     role?: string;
+    exp?: number
 }
 
 declare global {
@@ -37,7 +38,6 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 
         next()
     } catch (err) {
-        console.log(err)
         res.status(500).send({
             message: "error",
             error: JSON.stringify(err)
@@ -45,21 +45,21 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     }
 }
 
-// export const adminGuard = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
+export const adminGuard = async (req: Request, res: Response, next: NextFunction) => {
+    try {
 
-//         console.log("login sebagai => ", req.user)
+        // console.log("login sebagai => ", req.user)
 
-//         if (req.user?.role != "admin") {
-//             return res.status(401).send("Unauthorized")
-//         }
+        if (req.user?.role != "event_organizer") {
+            return res.status(401).send("Unauthorized")
+        }
 
-//         next()
-//     } catch (err) {
-//         console.log(err)
-//         res.status(500).send({
-//             message: "error",
-//             error: (err as Error).message
-//         })
-//     }
-// }
+        next()
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({
+            message: "error",
+            error: (err as Error).message
+        })
+    }
+}
