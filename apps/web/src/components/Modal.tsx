@@ -40,7 +40,7 @@ export function ModalRegister({isOpen, onClose}: ModalRegisterProps) {
     const [role, setRole] = useState("");
 
     const [showAlert, setShowAlert] = useState(false);
-    const [alertType, setAlertType] = useState("");
+    const [alertType, setAlertType] = useState<"success" | "error" | "info" | "warning" | "loading" | undefined>("error");
     const [alertMessage, setAlertMessage] = useState("");
 
     const handleRegister = async () => {
@@ -92,8 +92,10 @@ export function ModalRegister({isOpen, onClose}: ModalRegisterProps) {
                 setAlertMessage(res.response.data.message);
                 throw new Error(res.data.message);
             }
-        } catch (error) {
-            // setAlertMessage(error.response.data.message)
+        } catch (error: any) {
+            if (error.response?.data?.message) {
+                setAlertMessage(error.response.data.message);
+            }
             setAlertType("error")
             setShowAlert(true);
         }
@@ -163,20 +165,12 @@ interface ModalLoginProps {
     onClose: () => void;
 }
 
-interface ErrorResponse {
-    response: {
-        data: {
-            message: string;
-        };
-    };
-}
-
 export function ModalLogin({isOpen, onClose}: ModalLoginProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const [showAlert, setShowAlert] = useState(false);
-    const [alertType, setAlertType] = useState("");
+    const [alertType, setAlertType] = useState<"success" | "error" | "info" | "warning" | "loading" | undefined>("error");
     const [alertMessage, setAlertMessage] = useState("");
 
     const router = useRouter();
@@ -203,9 +197,11 @@ export function ModalLogin({isOpen, onClose}: ModalLoginProps) {
                 setPassword("");
                 onClose();
             }
-        } catch (error) {
-            const typedError = error as ErrorResponse;
-            setAlertMessage(typedError.response?.data.message);
+        } catch (error: any) {
+            if (error.response?.data?.message) {
+                setAlertMessage(error.response.data.message);
+            }
+            console.log(error)
             setAlertType("error")
             setShowAlert(true);
         }
