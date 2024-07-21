@@ -41,7 +41,7 @@ model LogUserPoint {
 model LogUserlogin {
   id        Int      @id @default(autoincrement())
   userId    Int
-  token     String
+  token     String   @db.VarChar(255)
   createdAt DateTime @default(now())
   User      User     @relation(fields: [userId], references: [id])
 

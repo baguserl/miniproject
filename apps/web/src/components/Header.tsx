@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import {
   Box,
   Flex,
@@ -22,14 +23,53 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@chakra-ui/icons'
-import {ModalRegister, ModalLogin} from '@/components/Modal';
+import { ModalRegister, ModalLogin } from '@/components/Modal';
+import { deleteCookie, getCookie } from '@/actions/cookies'
+import { myProfile } from '@/api/auth'
+import { useRouter } from 'next/navigation'
 
 export default function Navbar() {
   // const { isOpen, onToggle } = useDisclosure()
+  const [hasCookie, setHasCookie] = useState(false);
+  const [balance, setBalance] = useState(0);
   const nav = useDisclosure();
 
   const modalRegister = useDisclosure();
   const modalLogin = useDisclosure();
+
+  const router = useRouter();
+
+  async function checkCookie() {
+    const cookie = await getCookie('authToken');
+    setHasCookie(!!cookie);
+  }
+
+  async function getProfile() {
+    const res = await myProfile();
+
+    setBalance(res.data.profile.balance);
+  }
+
+  useEffect(() => {
+    checkCookie();
+    router.push('/');
+  }, [setHasCookie]);
+
+  useEffect(() => {
+    checkCookie();
+  }, [modalLogin]);
+
+  useEffect(() => {
+    if (hasCookie) {
+      getProfile();
+    }
+  }, [hasCookie]);
+
+  const handleLogout = async () => {
+    await deleteCookie('authToken');
+    setHasCookie(false);
+    router.push('/');
+  }
 
   return (
     <Box>
@@ -67,29 +107,48 @@ export default function Navbar() {
           </Flex>
         </Flex>
 
-        <Stack
-          flex={{ base: 1, md: 0 }}
-          justify={'flex-end'}
-          direction={'row'}
-          spacing={6}>
-          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'} onClick={modalLogin.onOpen}>
-            Sign In
-          </Button>
-          <Button
-            as={'a'}
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            color={'white'}
-            bg={'pink.400'}
-            href={'#'}
-            _hover={{
-              bg: 'pink.300',
-            }}
-            onClick={modalRegister.onOpen}>
-            Sign Up
-          </Button>
-        </Stack>
+        {!hasCookie ? (
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={'flex-end'}
+            direction={'row'}
+            spacing={6}>
+            <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'} onClick={modalLogin.onOpen}>
+              Sign In
+            </Button>
+            <Button
+              as={'a'}
+              display={{ base: 'none', md: 'inline-flex' }}
+              fontSize={'sm'}
+              fontWeight={600}
+              color={'white'}
+              bg={'pink.400'}
+              href={'#'}
+              _hover={{
+                bg: 'pink.300',
+              }}
+              onClick={modalRegister.onOpen}>
+              Sign Up
+            </Button>
+          </Stack>
+        ) : (
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={'flex-end'}
+            direction={'row'}
+            spacing={6}>
+            <Box display={{ base: 'none', md: 'inline-flex' }}>Balance: {balance}</Box>
+            <Button
+              as={'a'}
+              fontSize={'sm'}
+              fontWeight={400}
+              variant={'link'}
+              href={'#'}
+              onClick={handleLogout}>
+              Sign Out
+            </Button>
+          </Stack>
+        )}
       </Flex>
 
       <Collapse in={nav.isOpen} animateOpacity>

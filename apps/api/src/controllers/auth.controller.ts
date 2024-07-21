@@ -40,13 +40,18 @@ export class AuthController {
 
     async registerUser(req: Request, res: Response) {
       try {
+        const { name, email, password, birthdate, referredBy, role } = req.body;
         
-        const { name, email, password, referredBy, role } = req.body;
-        const birthdate = new Date(req.body.birthdate).toISOString();
-
-        if (!name && !email && !password && !role) {
+        if (validator.isEmpty(name) || validator.isEmpty(email) || validator.isEmpty(password) || validator.isEmpty(role) || validator.isEmpty(birthdate)) {
           return res.status(400).send({
-            message: "Name, Email, Password and Role is required"
+            message: "Name, Email, Password, Birthdate and Role is required"
+          })
+        }
+        const validbirthdate = new Date(birthdate).toISOString().slice(0, 10);
+
+        if (!validator.isDate(validbirthdate)) {
+          return res.status(400).send({
+            message: "Wrong Birthdate format"
           })
         }
 
@@ -122,7 +127,7 @@ export class AuthController {
             name,
             email,
             password: hashedPassword,
-            birthdate: birthdate,
+            birthdate: validbirthdate,
             referralCode: referralCode,
             referredBy: referrerId,
             role
@@ -218,6 +223,65 @@ export class AuthController {
         })
       }
     
+    }
+
+    async myProfile(req: Request, res: Response) {
+      try {
+
+        const myid = req.user?.id
+
+        const user = await prisma.user.findUnique({
+          where: {
+            id: myid
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true
+          }
+        })
+
+        let profile = {
+          id: user?.id,
+          name: user?.name,
+          email: user?.email,
+          role: user?.role,
+          balance: 0,
+          discount: 0
+        }        
+
+        if (user?.role == 'customer') {
+          const balance = await prisma.logUserPoint.aggregate({
+            _sum: {
+              points: true,
+              discount: true
+            },
+            where: {
+              userId: myid
+            }
+          })
+
+          if (balance._sum.points) {
+            profile.balance = balance._sum.points
+          }
+
+          if (balance._sum.discount) {
+            profile.discount = balance._sum.discount
+          }
+        }
+
+        return res.status(200).json({
+          profile
+        })
+        
+      } catch (error) {
+        logErrorHandler(JSON.stringify(error))
+        res.status(500).send({
+          data: JSON.stringify(error)
+        })
+      }
+
     }
 
 }

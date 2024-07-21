@@ -57,7 +57,7 @@ export default class App {
       res.send(`Hello, Purwadhika Student API!`);
     });
 
-    this.app.use('/', authRouter.getRouter());
+    this.app.use('/auth', authRouter.getRouter());
   }
 
   public start(): void {
