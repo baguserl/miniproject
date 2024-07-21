@@ -11,9 +11,23 @@ Bagus Prakoso (Feature 2)
 install this first
 ### `npm install turbo@latest --save-dev`
 
-Runs the app in the development mode.
+Then, run the app in the development mode with.
 
-Open [http://localhost:5670](http://localhost:5670) to view it in the browser. 
+### `npm run dev`
+
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser. 
+
+next, open new window in vscode for backend
+
+### `File -> New Window, then browse for your miniproject/apps/api`
+
+run command in VSCode API Window
+
+### `npm run prisma`
+
+then, check your backend connection using Postman or browser by accessing [http://localhost:5670/api/auth](http://localhost:5670/api/auth)
+
+
 
 
 ### `npm run dev`

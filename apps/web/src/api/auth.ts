@@ -1,7 +1,7 @@
 "use client"
 import axios from "axios"
 import { getCookie } from "../actions/cookies"
-const base_url_api = "http://localhost:5670"
+const base_url_api = "http://localhost:5670/api"
 
 interface IRegisterRequest {
     name: string,
@@ -56,6 +56,6 @@ export async function myProfile() {
 
         return res
     }
-    return {}
+    return {data: {} as any}
 
 }
