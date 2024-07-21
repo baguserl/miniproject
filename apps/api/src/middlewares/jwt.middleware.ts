@@ -3,21 +3,24 @@ import { verify } from "jsonwebtoken"
 import { JWT_SECRET_KEY } from '@/config';
 
 type User = {
+    id: number;
     email: string;
     name: string;
     role?: string;
 }
 
-declare namespace Express {
-    export interface Request {
-        user?: User
+declare global {
+    namespace Express {
+        export interface Request {
+            user?: User
+        }
     }
 }
 
-export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     try {
-
-        console.log("AUTHORIZATION HEADER => ", req.header("Authorization"))
+        
+        // console.log("AUTHORIZATION HEADER => ", req.header("Authorization"))
 
         const token = req.header("Authorization")?.replace("Bearer ", "")
 
@@ -42,21 +45,21 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     }
 }
 
-export const adminGuard = async (req: Request, res: Response, next: NextFunction) => {
-    try {
+// export const adminGuard = async (req: Request, res: Response, next: NextFunction) => {
+//     try {
 
-        console.log("login sebagai => ", req.user)
+//         console.log("login sebagai => ", req.user)
 
-        if (req.user?.role != "admin") {
-            return res.status(401).send("Unauthorized")
-        }
+//         if (req.user?.role != "admin") {
+//             return res.status(401).send("Unauthorized")
+//         }
 
-        next()
-    } catch (err) {
-        console.log(err)
-        res.status(500).send({
-            message: "error",
-            error: (err as Error).message
-        })
-    }
-}
+//         next()
+//     } catch (err) {
+//         console.log(err)
+//         res.status(500).send({
+//             message: "error",
+//             error: (err as Error).message
+//         })
+//     }
+// }
