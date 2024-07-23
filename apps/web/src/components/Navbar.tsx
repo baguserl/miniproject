@@ -48,6 +48,8 @@ const NAV_ITEMS = [
 export function Navbar() {
   const [hasCookie, setHasCookie] = useState(false);
   const [balance, setBalance] = useState(0);
+  const [user, setUser] = useState({} as any);
+
   const nav = useDisclosure();
 
   const modalRegister = useDisclosure();
@@ -57,21 +59,42 @@ export function Navbar() {
 
   async function checkCookie() {
     const cookie = await getCookie('authToken');
-    setHasCookie(!!cookie);
+    if (cookie) {
+      setHasCookie(!!cookie);
+    } else {
+      router.push('/');
+    }
   }
 
   async function getProfile() {
-    const res = await myProfile();
-    setBalance(res.data.profile.balance);
+
+    try {
+      const res = await myProfile();
+      setBalance(0);
+
+      setUser(res.data.profile);
+      if (res.data.profile.role === 'customer') {
+        setBalance(res.data.profile.balance);
+      }
+
+      if (res.data.profile.role === 'event_organizer') {
+        router.push('/eo');
+      }
+    } catch (error: any) {
+      if (error.response.status === 500) {
+        // deleteCookie('authToken');
+        // router.push('/');
+      }
+    }
   }
 
   useEffect(() => {
     checkCookie();
-  }, [setHasCookie]);
+  }, []);
 
   useEffect(() => {
     checkCookie();
-  }, [modalLogin]);
+  }, [setHasCookie, modalLogin]);
 
   useEffect(() => {
     if (hasCookie) {
@@ -135,37 +158,33 @@ export function Navbar() {
           <DesktopNav />
         </Flex>
 
-        <Flex flex={{ base: 0, md: 0 }} justify={{ base: 'center', md: 'flex-end' }} align="center">
-          {!hasCookie ? (
-            <Stack direction={'row'} spacing={4} align="center" display={{ base: 'none', md: 'flex' }}>
-              <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'} onClick={modalLogin.onOpen}>
-                Sign In
-              </Button>
-              <Button
-                as={'a'}
-                fontSize={'sm'}
-                fontWeight={600}
-                variant={'link'}
-                href={'#'}
-                onClick={modalRegister.onOpen}>
-                Register
-              </Button>
-            </Stack>
-          ) : (
-            <Stack direction={'row'} spacing={4} align="center" display={{ base: 'none', md: 'flex' }}>
-              <Box as={'a'} fontSize={'sm'}>Balance: {balance}</Box>
-              <Button
-                as={'a'}
-                fontSize={'sm'}
-                fontWeight={400}
-                variant={'link'}
-                href={'#'}
-                onClick={handleLogout}>
-                Sign Out
-              </Button>
-            </Stack>
-          )}
-        </Flex>
+        {!hasCookie ? (
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={'flex-end'}
+            direction={'row'}
+            spacing={6}>
+            <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'} onClick={modalLogin.onOpen}>
+              Sign In
+            </Button>
+            <Button
+              as={'a'}
+              display={{ base: 'none', md: 'inline-flex' }}
+              fontSize={'sm'}
+              fontWeight={600}
+              color={'white'}
+              bg={'pink.400'}
+              href={'#'}
+              _hover={{
+                bg: 'pink.300',
+              }}
+              onClick={modalRegister.onOpen}>
+              Sign Up
+            </Button>
+          </Stack>
+        ) : (
+          <ProfileDropdown user={user} handleLogout={handleLogout} />
+        )}
       </Flex>
 
       <Collapse in={nav.isOpen} animateOpacity>
@@ -190,6 +209,49 @@ export function Navbar() {
       <ModalRegister isOpen={modalRegister.isOpen} onClose={modalRegister.onClose}/>
       <ModalLogin isOpen={modalLogin.isOpen} onClose={modalLogin.onClose}/>
     </Box>
+  )
+}
+
+const ProfileDropdown = ({user, handleLogout }: {user: any, handleLogout: () => void}) => {
+  const { isOpen, onToggle } = useDisclosure()
+
+  return (
+    <Stack p={4}>
+      <Box>
+        <Popover trigger={'click'} placement={'bottom'} closeOnBlur={false}>
+          <PopoverTrigger>
+            <Box>
+              <Text>Hello, {user.name}</Text>
+            </Box>
+          </PopoverTrigger>
+          <PopoverContent>
+            {user.role == 'customer' && (
+              <Stack>
+                <Text fontSize={'sm'} fontWeight={'bold'} p={2}>
+                  RefCode: {user.referralCode}
+                </Text>
+                <Text fontSize={'sm'} fontWeight={'bold'} p={2}>
+                  Balance: {user.balance.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 })}
+                </Text>
+              </Stack>
+            )}
+            <Button
+              as={'a'}
+              fontSize={'sm'}
+              fontWeight={400}
+              variant={'link'}
+              href={'#'}
+              p={2}
+              backgroundColor={'red.500'}
+              color={'white'}
+              onClick={handleLogout}>
+              Sign Out
+            </Button>
+          </PopoverContent>
+        </Popover>
+        
+      </Box>
+    </Stack>
   )
 }
 

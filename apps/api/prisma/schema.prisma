@@ -11,18 +11,19 @@ datasource db {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  email          String         @unique
-  password       String
-  name           String
-  birthdate      DateTime       @db.Date
-  referralCode   String?        @db.Char(8)
-  referredBy     Int?           @default(0)
-  role           String         @default("customer")
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime?      @updatedAt
-  log_userpoints LogUserPoint[]
-  log_userlogins LogUserlogin[]
+  id                 Int                @id @default(autoincrement())
+  email              String             @unique
+  password           String
+  name               String
+  birthdate          DateTime           @db.Date
+  referralCode       String?            @db.Char(8)
+  referredBy         Int?               @default(0)
+  role               String             @default("customer")
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime?          @updatedAt
+  event_transactions EventTransaction[]
+  log_userpoints     LogUserPoint[]
+  log_userlogins     LogUserlogin[]
 
   @@map("users")
 }
@@ -46,4 +47,33 @@ model LogUserlogin {
   User      User     @relation(fields: [userId], references: [id])
 
   @@map("log_userlogins")
+}
+
+model Event {
+  id               Int                @id @default(autoincrement())
+  name             String
+  eventtype        String             @default("free")
+  eventtime        DateTime
+  description      String
+  price            Float
+  location         String
+  seats            Int
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime?          @updatedAt
+  EventTransaction EventTransaction[]
+
+  @@map("events")
+}
+
+model EventTransaction {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  eventId     Int
+  discount    Float
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+  Event       Event     @relation(fields: [eventId], references: [id])
+  User        User      @relation(fields: [userId], references: [id])
+
+  @@map("event_transactions")
 }
