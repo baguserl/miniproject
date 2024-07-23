@@ -46,15 +46,9 @@ export class AuthController {
             message: "Name, Email, Password, Birthdate and Role is required"
           })
         }
-        const validbirthdate = new Date(birthdate).toISOString().slice(0, 10);
+        const validbirthdate = new Date(birthdate).toISOString();
 
-        if (!validator.isDate(validbirthdate)) {
-          return res.status(400).send({
-            message: "Wrong Birthdate format"
-          })
-        }
-
-        if (!validator.isEmail(email)) {
+              if (!validator.isEmail(email)) {
           return res.status(400).send({
             message: "Wrong Email format"
           })
