@@ -1,18 +1,17 @@
 'use client'
-
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import {
   Box,
   Flex,
   Text,
+  Icon,
   IconButton,
   Button,
   Stack,
   Collapse,
-  Icon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
+  Input,
+  Image,
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
@@ -21,15 +20,32 @@ import {
   HamburgerIcon,
   CloseIcon,
   ChevronDownIcon,
-  ChevronRightIcon,
 } from '@chakra-ui/icons'
-import { ModalRegister, ModalLogin } from '@/components/Modal';
+import { ModalRegister, ModalLogin } from '@/components/Modal'
 import { deleteCookie, getCookie } from '@/actions/cookies'
 import { myProfile } from '@/api/auth'
 import { useRouter } from 'next/navigation'
 
-export default function Navbar() {
-  // const { isOpen, onToggle } = useDisclosure()
+const NAV_ITEMS = [
+  {
+    label: 'Home',
+    href: '/',
+  },
+  {
+    label: 'Events',
+    href: '#',
+  },
+  {
+    label: 'Create Events',
+    href: '/CreateEvent',
+  },
+  {
+    label: 'About Us',
+    href: '/AboutUs',
+  },
+];
+
+export function Navbar() {
   const [hasCookie, setHasCookie] = useState(false);
   const [balance, setBalance] = useState(0);
   const [user, setUser] = useState({} as any);
@@ -103,9 +119,11 @@ export default function Navbar() {
         borderBottom={1}
         borderStyle={'solid'}
         borderColor={useColorModeValue('gray.200', 'gray.900')}
-        align={'center'}>
+        align={'center'}
+        justify={'space-between'}
+      >
         <Flex
-          flex={{ base: 1, md: 'auto' }}
+          flex={{ base: 'none', md: 'auto' }}
           ml={{ base: -2 }}
           display={{ base: 'flex', md: 'none' }}>
           <IconButton
@@ -115,17 +133,29 @@ export default function Navbar() {
             aria-label={'Toggle Navigation'}
           />
         </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <Text
-            textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-            fontFamily={'heading'}
-            color={useColorModeValue('gray.800', 'white')}>
-            Logo
-          </Text>
 
-          <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-            <DesktopNav />
-          </Flex>
+        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'center' }} align="center" position="relative">
+          <Image
+            src="/images/logo.png"
+            alt="logo"
+            boxSize="40px"
+            mr={2}
+          />
+          <Text
+            textAlign={useBreakpointValue({ base: 'center', md: 'center' })}
+            fontFamily={'heading'}
+            fontSize='2xl'
+            fontWeight='semibold'
+            whiteSpace="nowrap"
+            color={useColorModeValue('gray.800', 'white')}
+            mx="auto"
+          >
+            Musical Concert
+          </Text>
+        </Flex>
+
+        <Flex flex={{ base: 'none', md: 'auto' }} justify={{ base: 'center', md: 'center' }} align="center" mx={4}>
+          <DesktopNav />
         </Flex>
 
         {!hasCookie ? (
@@ -158,7 +188,22 @@ export default function Navbar() {
       </Flex>
 
       <Collapse in={nav.isOpen} animateOpacity>
-        <MobileNav />
+        <MobileNav 
+          modalLogin={modalLogin}
+          modalRegister={modalRegister}
+          hasCookie={hasCookie}
+          balance={balance}
+          handleLogout={handleLogout}
+        />
+        <Box p={4} display={{ md: 'none' }}>
+          <Input
+            placeholder="Search Location"
+            width="100%"
+            bg={useColorModeValue('white', 'gray.700')}
+            color={useColorModeValue('gray.800', 'white')}
+            mb={4}
+          />
+        </Box>
       </Collapse>
 
       <ModalRegister isOpen={modalRegister.isOpen} onClose={modalRegister.onClose}/>
@@ -213,92 +258,72 @@ const ProfileDropdown = ({user, handleLogout }: {user: any, handleLogout: () => 
 const DesktopNav = () => {
   const linkColor = useColorModeValue('gray.600', 'gray.200')
   const linkHoverColor = useColorModeValue('gray.800', 'white')
-  const popoverContentBgColor = useColorModeValue('white', 'gray.800')
 
   return (
-    <Stack direction={'row'} spacing={4}>
+    <Stack direction={'row'} spacing={4} alignItems="center" display={{ base: 'none', md: 'flex' }}>
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
-          <Popover trigger={'hover'} placement={'bottom-start'}>
-            <PopoverTrigger>
-              <Box
-                as="a"
-                p={2}
-                href={navItem.href ?? '#'}
-                fontSize={'sm'}
-                fontWeight={500}
-                color={linkColor}
-                _hover={{
-                  textDecoration: 'none',
-                  color: linkHoverColor,
-                }}>
-                {navItem.label}
-              </Box>
-            </PopoverTrigger>
-
-            {navItem.children && (
-              <PopoverContent
-                border={0}
-                boxShadow={'xl'}
-                bg={popoverContentBgColor}
-                p={4}
-                rounded={'xl'}
-                minW={'sm'}>
-                <Stack>
-                  {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
-                  ))}
-                </Stack>
-              </PopoverContent>
-            )}
-          </Popover>
+          <Box
+            as="a"
+            p={2}
+            href={navItem.href ?? '#'}
+            fontSize={'sm'}
+            fontWeight={500}
+            color={linkColor}
+            _hover={{
+              textDecoration: 'none',
+              color: linkHoverColor,
+            }}>
+            {navItem.label}
+          </Box>
         </Box>
       ))}
+      <Input
+        placeholder="Search Location"
+        width="auto"
+        bg={useColorModeValue('white', 'gray.700')}
+        color={useColorModeValue('gray.800', 'white')}
+        ml={4}
+      />
     </Stack>
   )
 }
 
-const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
-  return (
-    <Box
-      as="a"
-      href={href}
-      role={'group'}
-      display={'block'}
-      p={2}
-      rounded={'md'}
-      _hover={{ bg: useColorModeValue('pink.50', 'gray.900') }}>
-      <Stack direction={'row'} align={'center'}>
-        <Box>
-          <Text
-            transition={'all .3s ease'}
-            _groupHover={{ color: 'pink.400' }}
-            fontWeight={500}>
-            {label}
-          </Text>
-          <Text fontSize={'sm'}>{subLabel}</Text>
-        </Box>
-        <Flex
-          transition={'all .3s ease'}
-          transform={'translateX(-10px)'}
-          opacity={0}
-          _groupHover={{ opacity: '100%', transform: 'translateX(0)' }}
-          justify={'flex-end'}
-          align={'center'}
-          flex={1}>
-          <Icon color={'pink.400'} w={5} h={5} as={ChevronRightIcon} />
-        </Flex>
-      </Stack>
-    </Box>
-  )
-}
-
-const MobileNav = () => {
+const MobileNav = ({ modalLogin, modalRegister, hasCookie, balance, handleLogout }: { modalLogin: any, modalRegister: any, hasCookie: boolean, balance: number, handleLogout: () => void }) => {
   return (
     <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ md: 'none' }}>
       {NAV_ITEMS.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
+      {!hasCookie ? (
+        <Stack direction={'row'} spacing={4} align="center" mt={4}>
+          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'} onClick={modalLogin.onOpen}>
+            Sign In
+          </Button>
+          <Button
+            as={'a'}
+            fontSize={'sm'}
+            fontWeight={600}
+            variant={'link'}
+            href={'#'}
+            onClick={modalRegister.onOpen}>
+            Register
+          </Button>
+        </Stack>
+      ) : (
+        <Stack direction={'row'} spacing={4} align="center" mt={4}>
+          <Box as={'a'} fontSize={'sm'}>Balance: {balance}</Box>
+          <Button
+            as={'a'}
+            fontSize={'sm'}
+            fontWeight={400}
+            variant={'link'}
+            href={'#'}
+            onClick={handleLogout}>
+            Sign Out
+          </Button>
+        </Stack>
+      )}
     </Stack>
   )
 }
@@ -357,44 +382,3 @@ interface NavItem {
   children?: Array<NavItem>
   href?: string
 }
-
-const NAV_ITEMS: Array<NavItem> = [
-  {
-    label: 'Inspiration',
-    children: [
-      {
-        label: 'Explore Design Work',
-        subLabel: 'Trending Design to inspire you',
-        href: '#',
-      },
-      {
-        label: 'New & Noteworthy',
-        subLabel: 'Up-and-coming Designers',
-        href: '#',
-      },
-    ],
-  },
-  {
-    label: 'Find Work',
-    children: [
-      {
-        label: 'Job Board',
-        subLabel: 'Find your dream design job',
-        href: '#',
-      },
-      {
-        label: 'Freelance Projects',
-        subLabel: 'An exclusive list for contract work',
-        href: '#',
-      },
-    ],
-  },
-  {
-    label: 'Learn Design',
-    href: '#',
-  },
-  {
-    label: 'Hire Designers',
-    href: '#',
-  },
-]

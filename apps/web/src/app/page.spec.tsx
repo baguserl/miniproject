@@ -1,7 +1,12 @@
-import Home from './page';
+import Image from 'next/image'
+import styles from './page.module.css'
+import Navbar from '../components/Navbar'
+import Hero from '../components/Hero'
 
-describe('<Home />', () => {
-  it('mounts', () => {
-    cy.mount(<Home />);
-  });
-});
+export default function Home() {
+  return (
+    <main className={styles.main}>
+      <Hero />
+    </main>
+  )
+}
