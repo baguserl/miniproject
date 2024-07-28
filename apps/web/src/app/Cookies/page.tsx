@@ -1,6 +1,9 @@
+"use client";
+
 export default function Cookies() {
-       return (
-      <div className="container mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
+  return (
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-grow container mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
         <div className="space-y-8">
           <div>
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Cookies Policy</h1>
@@ -58,17 +61,17 @@ export default function Cookies() {
             </p>
             <ul className="mt-4 list-disc space-y-2 pl-6 text-muted-foreground">
               <li>
-                <strong>Google Chrome:</strong> Go to Settings {">"} Privacy and security > Cookies and other site data.
+                <strong>Google Chrome:</strong> Go to Settings {">"} Privacy and security {">"} Cookies and other site data.
               </li>
               <li>
-                <strong>Mozilla Firefox:</strong> Go to Options > Privacy & Security > Cookies and Site Data.
+                <strong>Mozilla Firefox:</strong> Go to Options {">"} Privacy & Security {">"} Cookies and Site Data.
               </li>
               <li>
-                <strong>Microsoft Edge:</strong> Go to Settings > Privacy, search, and services > Cookies and site
+                <strong>Microsoft Edge:</strong> Go to Settings {">"} Privacy, search, and services {">"} Cookies and site
                 permissions.
               </li>
               <li>
-                <strong>Safari:</strong> Go to Preferences > Privacy > Cookies and website data.
+                <strong>Safari:</strong> Go to Preferences {">"} Privacy {">"} Cookies and website data.
               </li>
             </ul>
             <p className="mt-4 text-muted-foreground">
@@ -77,6 +80,18 @@ export default function Cookies() {
             </p>
           </div>
         </div>
-      </div>
-    )
-  }
+      </main>
+      <footer className="bg-gray-800 text-white py-4">
+        <div className="container mx-auto text-center">
+          <p>© 2024 Acme Inc. All rights reserved.</p>
+          <nav className="flex justify-center space-x-4">
+            <a href="#" className="hover:underline">Home</a>
+            <a href="#" className="hover:underline">About Us</a>
+            <a href="#" className="hover:underline">Cookies</a>
+            <a href="#" className="hover:underline">Contact Us</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+  );
+}

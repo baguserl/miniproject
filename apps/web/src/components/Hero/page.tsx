@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import Link from "next/link";
 
@@ -16,6 +16,14 @@ export default function Hero() {
     "/images/c6.jpg",
   ];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
   };
@@ -25,12 +33,12 @@ export default function Hero() {
   };
 
   return (
-    <section className="w-full pt-12 md:pt-24 lg:pt-32 flex justify-center">
+    <section className="w-full pt-12 md:pt-24 lg:pt-0 flex justify-center">
       <div className="container space-y-10 xl:space-y-16">
         <div className="relative w-full max-w-5xl mx-auto">
           <div className="overflow-hidden">
             <div
-              className="flex transition-transform duration-500"
+              className="flex transition-transform duration-1500"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
               {images.map((image, index) => (
@@ -62,22 +70,22 @@ export default function Hero() {
           </button>
         </div>
         <div className="flex items-center justify-center gap-4">
-        <Link
-            href="#"
+          <Link
+            href="/ShowEvent"
             className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             prefetch={false}
           >
             Browse Events
           </Link>
           <Link
-            href="#"
+            href="/CreateEvent"
             className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             prefetch={false}
           >
             Create Events
           </Link>
           <Link
-            href="#"
+            href="/CreateTestimonial"
             className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             prefetch={false}
           >
@@ -98,7 +106,7 @@ export default function Hero() {
             />
           </div>
           <div className="relative group grid [grid-template-areas:stack] overflow-hidden rounded-lg">
-            <Link href="#" className="absolute inset-0 z-10" prefetch={false}>
+            <Link href="/CreateEvent" className="absolute inset-0 z-10" prefetch={false}>
               <span className="sr-only">Create Events</span>
             </Link>
             <img
@@ -110,7 +118,7 @@ export default function Hero() {
             />
           </div>
           <div className="relative group grid [grid-template-areas:stack] overflow-hidden rounded-lg">
-            <Link href="#" className="absolute inset-0 z-10" prefetch={false}>
+            <Link href="/AboutUs" className="absolute inset-0 z-10" prefetch={false}>
               <span className="sr-only">Search Events by Location</span>
             </Link>
             <img

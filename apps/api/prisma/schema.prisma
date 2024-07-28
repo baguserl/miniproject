@@ -53,7 +53,8 @@ model Event {
   id               Int                @id @default(autoincrement())
   name             String
   eventtype        String             @default("free")
-  eventtime        DateTime
+  event_date       DateTime           @db.Date
+  event_time       DateTime           @db.Time
   description      String
   price            Float
   location         String
@@ -77,3 +78,4 @@ model EventTransaction {
 
   @@map("event_transactions")
 }
+

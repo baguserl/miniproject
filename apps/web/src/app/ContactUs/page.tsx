@@ -1,45 +1,43 @@
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 
-export default function ContactUs() {
+export default function Component() {
   return (
-    <div className="w-full max-w-4xl mx-auto py-12 md:py-16 lg:py-20">
-      <div className="space-y-6 text-center">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Contact Us</h1>
-        <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
-          We value your feedback and are here to assist you with any inquiries or concerns you may have. Please fill out
-          the form below, and we'll get back to you as soon as possible.
-        </p>
-      </div>
-      <div className="mt-10 sm:mt-12">
-        <form className="space-y-6">
-          <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-            <div className="sm:col-span-1">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" type="text" placeholder="Enter your name" />
+    <Card className="mx-auto max-w-md mt-8">
+      <CardHeader>
+        <CardTitle>Contact Us</CardTitle>
+        <CardDescription>Fill out the form below and we'll get back to you as soon as possible.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="first-name">First Name</Label>
+              <Input id="first-name" placeholder="John" required />
             </div>
-            <div className="sm:col-span-1">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="Enter your email address" />
+            <div className="space-y-2">
+              <Label htmlFor="last-name">Last Name</Label>
+              <Input id="last-name" placeholder="Doe" required />
             </div>
           </div>
-          <div>
-            <Label htmlFor="subject">Subject</Label>
-            <Input id="subject" type="text" placeholder="Enter the subject" />
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="john@example.com" required />
           </div>
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="message">Message</Label>
-            <Textarea id="message" rows={5} placeholder="Enter your message" className="min-h-[150px]" />
-          </div>
-          <div className="flex justify-center">
-            <Button type="submit" className="w-full sm:w-auto">
-              Submit
-            </Button>
+            <Textarea id="message" placeholder="How can we help you?" className="min-h-[100px]" required />
           </div>
         </form>
-      </div>
-    </div>
+      </CardContent>
+      <CardFooter>
+        <Button type="submit" className="w-full">
+          Submit
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }

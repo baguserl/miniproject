@@ -6,3 +6,8 @@
 2024-07-21T20:39:57.382Z - {} 
 2024-07-21T20:40:18.195Z - {} 
 2024-07-21T20:42:20.406Z - {} 
+2024-07-23T15:36:08.577Z - {"name":"PrismaClientInitializationError","clientVersion":"5.14.0"} 
+2024-07-23T15:37:52.448Z - {"name":"PrismaClientInitializationError","clientVersion":"5.14.0"} 
+2024-07-23T15:38:06.233Z - {"name":"PrismaClientInitializationError","clientVersion":"5.14.0"} 
+2024-07-23T15:38:06.234Z - {"name":"PrismaClientInitializationError","clientVersion":"5.14.0"} 
+2024-07-23T15:38:15.132Z - {"name":"PrismaClientInitializationError","clientVersion":"5.14.0"} 
