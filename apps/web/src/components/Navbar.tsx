@@ -1,6 +1,6 @@
-'use client'
-import Link from 'next/link'
-import { useState, useEffect } from 'react'
+'use client';
+import Link from 'next/link';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Flex,
@@ -15,35 +15,38 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
-} from '@chakra-ui/react'
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@chakra-ui/react';
 import {
   HamburgerIcon,
   CloseIcon,
   ChevronDownIcon,
-} from '@chakra-ui/icons'
-import { ModalRegister, ModalLogin } from '@/components/Modal'
-import { deleteCookie, getCookie } from '@/actions/cookies'
-import { myProfile } from '@/api/auth'
-import { useRouter } from 'next/navigation'
+} from '@chakra-ui/icons';
+import { ModalRegister, ModalLogin } from '@/components/Modal';
+import { deleteCookie, getCookie } from '@/actions/cookies';
+import { myProfile } from '@/api/auth';
+import { useRouter, usePathname } from 'next/navigation';
 
 const NAV_ITEMS = [
-  {
-    label: 'Home',
-    href: '/',
-  },
-  {
-    label: 'Events',
-    href: '#',
-  },
-  {
-    label: 'Create Events',
-    href: '/CreateEvent',
-  },
-  {
-    label: 'About Us',
-    href: '/AboutUs',
-  },
+  { label: 'Home', href: '/' },
+  { label: 'Events', href: '/ShowEvent' },
+  { label: 'Create Events', href: '/CreateEvent' },
+  { label: 'About Us', href: '/AboutUs' },
 ];
+
+function debounce(func: Function, wait: number) {
+  let timeout: NodeJS.Timeout;
+  return function executedFunction(...args: any[]) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 
 export function Navbar() {
   const [hasCookie, setHasCookie] = useState(false);
@@ -51,23 +54,22 @@ export function Navbar() {
   const [user, setUser] = useState({} as any);
 
   const nav = useDisclosure();
-
   const modalRegister = useDisclosure();
   const modalLogin = useDisclosure();
 
   const router = useRouter();
+  const pathname = usePathname() || ''; 
 
   async function checkCookie() {
     const cookie = await getCookie('authToken');
     if (cookie) {
       setHasCookie(!!cookie);
     } else {
-      router.push('/');
+      router.push(pathname); 
     }
   }
 
   async function getProfile() {
-
     try {
       const res = await myProfile();
       setBalance(0);
@@ -82,8 +84,7 @@ export function Navbar() {
       }
     } catch (error: any) {
       if (error.response.status === 500) {
-        // deleteCookie('authToken');
-        // router.push('/');
+        
       }
     }
   }
@@ -106,7 +107,14 @@ export function Navbar() {
     await deleteCookie('authToken');
     setHasCookie(false);
     router.push('/');
-  }
+  };
+
+  const handleSearch = useCallback(debounce((value: string) => {
+    console.log('Searching for:', value);
+    
+  }, 500), []);
+
+  const isDesktop = useBreakpointValue({ base: false, md: true });
 
   return (
     <Box>
@@ -144,8 +152,8 @@ export function Navbar() {
           <Text
             textAlign={useBreakpointValue({ base: 'center', md: 'center' })}
             fontFamily={'heading'}
-            fontSize='2xl'
-            fontWeight='semibold'
+            fontSize='4xl'
+            fontWeight='bold'
             whiteSpace="nowrap"
             color={useColorModeValue('gray.800', 'white')}
             mx="auto"
@@ -155,7 +163,7 @@ export function Navbar() {
         </Flex>
 
         <Flex flex={{ base: 'none', md: 'auto' }} justify={{ base: 'center', md: 'center' }} align="center" mx={4}>
-          <DesktopNav />
+          <DesktopNav handleSearch={handleSearch} />
         </Flex>
 
         {!hasCookie ? (
@@ -163,23 +171,34 @@ export function Navbar() {
             flex={{ base: 1, md: 0 }}
             justify={'flex-end'}
             direction={'row'}
-            spacing={6}>
-            <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'} onClick={modalLogin.onOpen}>
-              Sign In
-            </Button>
+            spacing={6}
+          >
+            {isDesktop && (
+              <Button
+                fontSize={'sm'}
+                fontWeight={400}
+                variant={'link'}
+                _hover={{
+                  color: 'red',
+                  fontWeight: 'bold',
+                }}
+                onClick={modalLogin.onOpen}
+              >
+                Sign In
+              </Button>
+            )}
             <Button
-              as={'a'}
               display={{ base: 'none', md: 'inline-flex' }}
               fontSize={'sm'}
-              fontWeight={600}
-              color={'white'}
-              bg={'pink.400'}
-              href={'#'}
+              fontWeight={400}
+              variant={'link'}
               _hover={{
-                bg: 'pink.300',
+                color: 'red',
+                fontWeight: 'bold',
               }}
-              onClick={modalRegister.onOpen}>
-              Sign Up
+              onClick={modalRegister.onOpen}
+            >
+              Register
             </Button>
           </Stack>
         ) : (
@@ -188,31 +207,23 @@ export function Navbar() {
       </Flex>
 
       <Collapse in={nav.isOpen} animateOpacity>
-        <MobileNav 
+        <MobileNav
           modalLogin={modalLogin}
           modalRegister={modalRegister}
           hasCookie={hasCookie}
           balance={balance}
           handleLogout={handleLogout}
+          handleSearch={handleSearch}
         />
-        <Box p={4} display={{ md: 'none' }}>
-          <Input
-            placeholder="Search Location"
-            width="100%"
-            bg={useColorModeValue('white', 'gray.700')}
-            color={useColorModeValue('gray.800', 'white')}
-            mb={4}
-          />
-        </Box>
       </Collapse>
 
-      <ModalRegister isOpen={modalRegister.isOpen} onClose={modalRegister.onClose}/>
-      <ModalLogin isOpen={modalLogin.isOpen} onClose={modalLogin.onClose}/>
+      <ModalRegister isOpen={modalRegister.isOpen} onClose={modalRegister.onClose} />
+      <ModalLogin isOpen={modalLogin.isOpen} onClose={modalLogin.onClose} />
     </Box>
-  )
+  );
 }
 
-const ProfileDropdown = ({user, handleLogout }: {user: any, handleLogout: () => void}) => {
+const ProfileDropdown = ({ user, handleLogout }: { user: any, handleLogout: () => void }) => {
   const { isOpen, onToggle } = useDisclosure()
 
   return (
@@ -236,46 +247,44 @@ const ProfileDropdown = ({user, handleLogout }: {user: any, handleLogout: () => 
               </Stack>
             )}
             <Button
-              as={'a'}
               fontSize={'sm'}
               fontWeight={400}
               variant={'link'}
-              href={'#'}
-              p={2}
               backgroundColor={'red.500'}
               color={'white'}
-              onClick={handleLogout}>
+              onClick={handleLogout}
+            >
               Sign Out
             </Button>
           </PopoverContent>
         </Popover>
-        
       </Box>
     </Stack>
-  )
+  );
 }
 
-const DesktopNav = () => {
-  const linkColor = useColorModeValue('gray.600', 'gray.200')
-  const linkHoverColor = useColorModeValue('gray.800', 'white')
+const DesktopNav = ({ handleSearch }: { handleSearch: (value: string) => void }) => {
+  const linkColor = useColorModeValue('gray.600', 'gray.200');
+  const linkHoverColor = useColorModeValue('gray.800', 'white');
 
   return (
     <Stack direction={'row'} spacing={4} alignItems="center" display={{ base: 'none', md: 'flex' }}>
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
-          <Box
-            as="a"
-            p={2}
-            href={navItem.href ?? '#'}
-            fontSize={'sm'}
-            fontWeight={500}
-            color={linkColor}
-            _hover={{
-              textDecoration: 'none',
-              color: linkHoverColor,
-            }}>
-            {navItem.label}
-          </Box>
+          <Link href={navItem.href} legacyBehavior passHref>
+            <a
+              p={2}
+              fontSize={'sm'}
+              fontWeight={500}
+              color={linkColor}
+              _hover={{
+                textDecoration: 'none',
+                color: linkHoverColor,
+              }}
+            >
+              {navItem.label}
+            </a>
+          </Link>
         </Box>
       ))}
       <Input
@@ -284,12 +293,13 @@ const DesktopNav = () => {
         bg={useColorModeValue('white', 'gray.700')}
         color={useColorModeValue('gray.800', 'white')}
         ml={4}
+        onChange={(e) => handleSearch(e.target.value)}
       />
     </Stack>
-  )
+  );
 }
 
-const MobileNav = ({ modalLogin, modalRegister, hasCookie, balance, handleLogout }: { modalLogin: any, modalRegister: any, hasCookie: boolean, balance: number, handleLogout: () => void }) => {
+const MobileNav = ({ modalLogin, modalRegister, hasCookie, balance, handleLogout, handleSearch }: { modalLogin: any, modalRegister: any, hasCookie: boolean, balance: number, handleLogout: () => void, handleSearch: (value: string) => void }) => {
   return (
     <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ md: 'none' }}>
       {NAV_ITEMS.map((navItem) => (
@@ -297,39 +307,45 @@ const MobileNav = ({ modalLogin, modalRegister, hasCookie, balance, handleLogout
       ))}
       {!hasCookie ? (
         <Stack direction={'row'} spacing={4} align="center" mt={4}>
-          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'} onClick={modalLogin.onOpen}>
+          <Button fontSize={'sm'} fontWeight={400} variant={'link'} onClick={modalLogin.onOpen}>
             Sign In
           </Button>
           <Button
-            as={'a'}
             fontSize={'sm'}
             fontWeight={600}
             variant={'link'}
-            href={'#'}
-            onClick={modalRegister.onOpen}>
+            onClick={modalRegister.onOpen}
+          >
             Register
           </Button>
         </Stack>
       ) : (
         <Stack direction={'row'} spacing={4} align="center" mt={4}>
-          <Box as={'a'} fontSize={'sm'}>Balance: {balance}</Box>
+          <Box fontSize={'sm'}>Balance: {balance}</Box>
           <Button
-            as={'a'}
             fontSize={'sm'}
             fontWeight={400}
             variant={'link'}
-            href={'#'}
-            onClick={handleLogout}>
+            onClick={handleLogout}
+          >
             Sign Out
           </Button>
         </Stack>
       )}
+      <Input
+        placeholder="Search Location"
+        width="100%"
+        mt={4} // Add margin top for the search bar in responsive view
+        bg={useColorModeValue('white', 'gray.700')}
+        color={useColorModeValue('gray.800', 'white')}
+        onChange={(e) => handleSearch(e.target.value)}
+      />
     </Stack>
-  )
+  );
 }
 
 const MobileNavItem = ({ label, children, href }: NavItem) => {
-  const { isOpen, onToggle } = useDisclosure()
+  const { isOpen, onToggle } = useDisclosure();
 
   return (
     <Stack spacing={4} onClick={children && onToggle}>
@@ -341,7 +357,8 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         alignItems="center"
         _hover={{
           textDecoration: 'none',
-        }}>
+        }}
+      >
         <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
           {label}
         </Text>
@@ -363,22 +380,25 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
           borderLeft={1}
           borderStyle={'solid'}
           borderColor={useColorModeValue('gray.200', 'gray.700')}
-          align={'start'}>
+          align={'start'}
+        >
           {children &&
             children.map((child) => (
-              <Box as="a" key={child.label} py={2} href={child.href}>
+              <Box key={child.label} py={2} href={child.href}>
                 {child.label}
               </Box>
             ))}
         </Stack>
       </Collapse>
     </Stack>
-  )
+  );
 }
 
 interface NavItem {
-  label: string
-  subLabel?: string
-  children?: Array<NavItem>
-  href?: string
+  label: string;
+  subLabel?: string;
+  children?: Array<NavItem>;
+  href?: string;
 }
+
+export default Navbar;

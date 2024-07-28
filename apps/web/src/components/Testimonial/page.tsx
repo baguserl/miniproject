@@ -1,7 +1,6 @@
-
 export default function Testimonial() {
     return (
-      <section className="flex flex-col items-center justify-center h-screen gap-8 px-4 md:px-6">
+      <section className="flex flex-col items-center justify-center gap-8 px-4 md:px-6 pt-10">
         <div className="space-y-4 text-center">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">What Our Fans Say</h2>
           <p className="max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
